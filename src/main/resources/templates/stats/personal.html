@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('我的统计')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>我的个人统计</h1>
+                <p class="sub" th:text="${'账号 ' + account.username + ' · 个人工作量总览'}">个人统计</p>
+            </div>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 16px;">
+            <div class="metric"><span>名下任务总数</span><strong th:text="${stats.assignedTotal}">0</strong></div>
+            <div class="metric"><span>待处理</span><strong th:text="${stats.assignedTodo}">0</strong></div>
+            <div class="metric"><span>进行中</span><strong th:text="${stats.assignedInProgress}">0</strong></div>
+            <div class="metric good"><span>已完成</span><strong th:text="${stats.assignedDone}">0</strong></div>
+            <div class="metric"><span>我创建的任务</span><strong th:text="${stats.created}">0</strong></div>
+            <div class="metric"><span>我发表的评论</span><strong th:text="${stats.comments}">0</strong></div>
+        </div>
+
+        <h2>我的任务</h2>
+        <table>
+            <thead><tr><th>任务</th><th>状态</th><th>优先级</th><th>截止日期</th><th>创建时间</th></tr></thead>
+            <tbody>
+            <tr th:each="task : ${stats.assignedTasks}">
+                <td><a th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.title}">任务</a></td>
+                <td><span class="badge" th:text="${task.status.label}">状态</span></td>
+                <td th:text="${task.priorityLabel}">优先级</td>
+                <td th:classappend="${task.overdue} ? 'overdue'" th:text="${task.dueDateText != null and !#strings.isEmpty(task.dueDateText)} ? ${task.dueDateText} : '-'">-</td>
+                <td th:text="${task.createdAt != null} ? ${#temporals.format(task.createdAt, 'yyyy-MM-dd HH:mm')} : '-'">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(stats.assignedTasks)}"><td colspan="5" class="hint">当前没有分配给你的任务。</td></tr>
+            </tbody>
+        </table>
+
+        <h2 style="margin-top:24px;">我创建的任务</h2>
+        <table>
+            <thead><tr><th>任务</th><th>负责人</th><th>状态</th><th>创建时间</th></tr></thead>
+            <tbody>
+            <tr th:each="task : ${stats.createdTasks}">
+                <td><a th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.title}">任务</a></td>
+                <td th:text="${task.assignee != null} ? ${task.assignee.name} : '未分配'">未分配</td>
+                <td><span class="badge" th:text="${task.status.label}">状态</span></td>
+                <td th:text="${task.createdAt != null} ? ${#temporals.format(task.createdAt, 'yyyy-MM-dd HH:mm')} : '-'">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(stats.createdTasks)}"><td colspan="4" class="hint">你还没有创建过任务。</td></tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

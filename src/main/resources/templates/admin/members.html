@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('成员管理')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>成员管理</h1>
+                <p class="sub">维护团队成员信息，只有在职成员可以成为任务负责人。</p>
+            </div>
+            <div class="page-actions">
+                <form class="member-search" th:action="@{/admin/members}" method="get">
+                    <label class="member-search-label" for="memberName">按姓名搜索</label>
+                    <input id="memberName" class="member-search-input" type="search" name="name"
+                           placeholder="输入姓名关键词" th:value="${searchName}">
+                    <button class="btn" type="submit">搜索</button>
+                    <a class="btn ghost" th:if="${!#strings.isEmpty(searchName)}" th:href="@{/admin/members}">清空</a>
+                </form>
+                <a class="btn" th:href="@{/admin/members/new}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    新增成员
+                </a>
+            </div>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>邮箱</th>
+                <th>电话</th>
+                <th>岗位</th>
+                <th>状态</th>
+                <th class="th-actions">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td><strong th:text="${member.name}">姓名</strong></td>
+                <td th:text="${member.email}">邮箱</td>
+                <td th:text="${member.phone}">电话</td>
+                <td th:text="${member.position}">岗位</td>
+                <td>
+                    <span class="badge" th:classappend="${member.status.name() == 'ACTIVE'} ? 'ok' : 'off'"
+                          th:text="${member.status.name() == 'ACTIVE' ? '在职' : '离职'}">状态</span>
+                </td>
+                <td class="row-actions">
+                    <a class="btn ghost" th:href="@{/admin/members/{id}/edit(id=${member.id})}" title="编辑成员">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        编辑
+                    </a>
+                    <form th:action="@{/admin/members/{id}/delete(id=${member.id})}" method="post"
+                          onsubmit="return confirm('确认移除成员「' + ${member.name} + '」吗？');">
+                        <button class="btn ghost danger" type="submit" title="移除成员">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            移除
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(members)}">
+                <td colspan="6" class="empty">还没有成员，点击右上角「新增成员」创建第一位。</td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:replace="~{fragments/layout :: pagination}"></div>
+    </section>
+</main>
+</body>
+</html>

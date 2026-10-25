@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('无权访问')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <h1>无法访问</h1>
+        <p class="sub">当前登录状态无权查看该页面。团队成员只能查看分配给自己的任务。</p>
+        <a class="btn secondary" th:href="@{/home}">返回首页</a>
+    </section>
+</main>
+</body>
+</html>

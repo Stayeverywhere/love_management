@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('填写任务')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>填写任务</h1>
+                <p class="sub" th:text="${rule}">规则</p>
+            </div>
+            <a class="btn secondary" th:href="@{/pm/tasks}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/pm/tasks}" method="post" class="form-narrow">
+            <label for="title">任务标题</label>
+            <input id="title" name="title" th:value="${title}" required maxlength="50">
+            <label for="description">任务描述</label>
+            <textarea id="description" name="description" rows="3" maxlength="500" th:text="${description}"></textarea>
+            <label for="priority">优先级</label>
+            <select id="priority" name="priority">
+                <option value="LOW" th:selected="${priority == null ? true : priority == 'LOW'}">低</option>
+                <option value="MEDIUM" th:selected="${priority == null ? false : priority == 'MEDIUM'}">中</option>
+                <option value="HIGH" th:selected="${priority == null ? false : priority == 'HIGH'}">高</option>
+            </select>
+            <label for="dueDate">截止日期</label>
+            <input id="dueDate" name="dueDate" type="date" th:value="${dueDate}">
+            <label for="remindAt">提醒时间（可选）</label>
+            <input id="remindAt" name="remindAt" type="datetime-local" th:value="${remindAt}">
+            <p class="hint">到点会在数据看板的「待提醒任务」中提示；格式 yyyy-MM-dd HH:mm，也可只填日期。</p>
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    保存任务
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle} + ' · 爱管理'">爱管理</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<aside th:fragment="nav" class="sidebar">
+    <a class="brand" th:href="@{/home}">
+        <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.84-4.44-9.4-8.2C.8 10.34 2.06 6.5 5.4 5.6c1.96-.53 3.86.19 4.9 1.74L12 8.9l1.7-1.56c1.04-1.55 2.94-2.27 4.9-1.74 3.34.9 4.6 4.74 2.8 7.2-2.56 3.76-9.4 8.2-9.4 8.2z"/></svg>
+        </span>
+        <span class="brand-text">爱<span>管理</span></span>
+    </a>
+
+    <nav class="side-nav" th:if="${currentUser != null}">
+        <div class="nav-group" th:if="${currentUser.accountRole.name() != 'MEMBER'}">
+            <div class="nav-group-label">总览</div>
+            <a class="nav-item" th:href="@{/pm/dashboard}"
+               th:classappend="${requestURI == '/pm/dashboard'} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                <span>数据看板</span>
+            </a>
+            <a class="nav-item" th:href="@{/pm/trends}"
+               th:classappend="${requestURI == '/pm/trends'} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>
+                <span>项目趋势</span>
+            </a>
+            <a class="nav-item" th:href="@{/pm/reports}"
+               th:classappend="${requestURI == '/pm/reports'} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>成员任务分布</span>
+            </a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label" th:text="${currentUser.accountRole.name() == 'MEMBER'} ? '我的工作台' : '任务'">任务</div>
+            <a class="nav-item" th:if="${currentUser.accountRole.name() != 'MEMBER'}" th:href="@{/pm/tasks}"
+               th:classappend="${requestURI.startsWith('/pm/tasks')} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+                <span>任务管理</span>
+            </a>
+            <a class="nav-item" th:if="${currentUser.accountRole.name() == 'MEMBER'}" th:href="@{/tasks}"
+               th:classappend="${requestURI.startsWith('/tasks')} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>我的任务</span>
+            </a>
+        </div>
+        <div class="nav-group" th:if="${currentUser.accountRole.name() == 'ADMIN'}">
+            <div class="nav-group-label">管理</div>
+            <a class="nav-item" th:href="@{/admin/roles}"
+               th:classappend="${requestURI.startsWith('/admin/roles')} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6l8-3z"/></svg>
+                <span>角色配置</span>
+            </a>
+            <a class="nav-item" th:href="@{/admin/members}"
+               th:classappend="${requestURI.startsWith('/admin/members')} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>成员管理</span>
+            </a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-group-label">账号</div>
+            <a class="nav-item" th:href="@{/stats/personal}"
+               th:classappend="${requestURI == '/stats/personal'} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span>我的统计</span>
+            </a>
+            <a class="nav-item" th:href="@{/profile}"
+               th:classappend="${requestURI == '/profile'} ? 'active' : ''">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>我的资料</span>
+</a>
+<a class="nav-item" th:href="@{/password}"
+               th:classappend="${requestURI == '/password'} ? 'active' : ''">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span>设置密码</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="side-user" th:if="${currentUser != null}">
+        <div class="side-avatar" th:text="${#strings.substring(currentUser.displayName, 0, 1)}">A</div>
+        <div class="side-user-meta">
+            <strong th:text="${currentUser.displayName}">用户</strong>
+            <span th:text="${currentUser.accountRole.label}">角色</span>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button class="side-logout" type="submit" title="退出登录" aria-label="退出登录">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+        </form>
+    </div>
+</aside>
+<div th:fragment="alerts">
+    <div class="banner ok" th:if="${success}" th:text="${success}"></div>
+    <div class="banner bad" th:if="${error}" th:text="${error}"></div>
+</div>
+<div th:fragment="pagination" class="pagination" th:if="${totalElements != null and totalElements > 0}">
+    <span class="page-info" th:text="${'共 ' + totalElements + ' 条 · 第 ' + page + ' / ' + totalPages + ' 页'}">分页</span>
+    <span class="page-links" th:if="${totalPages > 1}">
+        <a class="page-btn" th:if="${hasPrevious}" th:href="${prevUrl}">« 上一页</a>
+        <a class="page-btn" th:if="${hasNext}" th:href="${nextUrl}">下一页 »</a>
+        <form class="page-jump" th:action="${pageUrlPrefix}" method="get" th:if="${pageUrlPrefix != null}">
+            <label class="page-jump-label" for="pageJumpInput">跳至</label>
+            <input id="pageJumpInput" class="page-jump-input" type="number" name="page"
+                   th:min="1" th:max="${totalPages}" th:value="${page}">
+            <button class="page-btn" type="submit">跳转</button>
+        </form>
+    </span>
+</div>
+</body>
+</html>

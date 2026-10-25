@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('确认分配')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <h1 th:text="${task.title}">任务</h1>
+        <p class="sub">只能从在职成员中选择负责人。确认后会保存任务与负责人的关联。</p>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <p>当前负责人：<strong th:text="${task.assignee != null ? task.assignee.name : '未分配'}">未分配</strong></p>
+        <form th:action="@{/pm/tasks/{id}/assign(id=${task.id})}" method="post">
+            <label for="memberId">选择负责人</label>
+            <select id="memberId" name="memberId" required>
+                <option value="">请选择</option>
+                <option th:each="member : ${candidates}" th:value="${member.id}" th:text="${member.name} + ' · ' + ${member.position}"
+                        th:selected="${task.assignee != null and task.assignee.id == member.id}"></option>
+            </select>
+            <p class="hint" th:if="${#lists.isEmpty(candidates)}">当前没有在职成员可选。</p>
+            <div class="actions">
+                <button class="btn" type="submit">确认分配</button>
+                <a class="btn secondary" th:href="@{/pm/tasks}">返回任务列表</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

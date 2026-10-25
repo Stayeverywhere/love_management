@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('任务分布报表')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>成员任务分布</h1>
+                <p class="sub">按成员统计名下任务的状态分布与占比；未分配任务单独列出。</p>
+            </div>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 16px;">
+            <div class="metric"><span>任务总数</span><strong th:text="${totalAll}">0</strong></div>
+            <div class="metric warn"><span>未分配</span><strong th:text="${unassigned}">0</strong></div>
+            <div class="metric"><span>在职成员</span><strong th:text="${memberCount}">0</strong></div>
+        </div>
+        <table>
+            <thead>
+            <tr><th>成员</th><th>任务总数</th><th>待处理</th><th>进行中</th><th>已完成</th><th>占比</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${rows}">
+                <td th:text="${row.name}">成员</td>
+                <td th:text="${row.total}">0</td>
+                <td th:text="${row.todo}">0</td>
+                <td th:text="${row.inProgress}">0</td>
+                <td th:text="${row.done}">0</td>
+                <td th:text="${row.percent != null and !#strings.isEmpty(row.percent)} ? ${row.percent} : '-'">0%</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(rows)}"><td colspan="6" class="hint">暂无在职成员。</td></tr>
+            </tbody>
+            <tfoot>
+            <tr th:if="${unassigned > 0}">
+                <td><strong>未分配</strong></td>
+                <td th:text="${unassigned}">0</td>
+                <td colspan="3" class="hint">尚未指派负责人，可在<a th:href="@{/pm/tasks(assignee=none)}">任务管理</a>中分配</td>
+                <td th:text="${totalAll > 0} ? ${#strings.isEmpty(unassignedPercent) ? '-' : unassignedPercent} : '-'">0%</td>
+            </tr>
+            </tfoot>
+        </table>
+        <div th:replace="~{fragments/layout :: pagination}"></div>
+    </section>
+</main>
+</body>
+</html>

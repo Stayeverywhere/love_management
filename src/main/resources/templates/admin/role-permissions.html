@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('功能权限')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1 th:text="'选择功能权限 · ' + ${role.name}">选择功能权限</h1>
+                <p class="sub">勾选后可立即看到当前选择，保存后再次打开仍保持一致。</p>
+                <p class="hint">数据权限：<strong th:text="${role.dataScope == 'SELF'} ? '仅自己' : (${role.dataScope == 'TEAM'} ? '本团队' : '全部数据')">全部数据</strong>（在角色名称页修改）</p>
+            </div>
+            <a class="btn secondary" th:href="@{/admin/roles}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回角色列表
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/admin/roles/{id}/permissions(id=${role.id})}" method="post">
+            <div class="checks">
+                <label class="check" th:each="item : ${permissions}">
+                    <input type="checkbox" name="codes" th:value="${item.code}"
+                           th:checked="${selected.contains(item.code)}" onchange="refreshSelection()">
+                    <span class="check-text">
+                        <strong th:text="${item.label}">权限</strong>
+                        <span class="hint" th:text="${item.description}">说明</span>
+                    </span>
+                </label>
+            </div>
+            <h2 class="section-title">当前选择</h2>
+            <div id="selection" class="chips selection-panel"></div>
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    保存权限配置
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+<script>
+    function refreshSelection() {
+        const box = document.getElementById('selection');
+        box.innerHTML = '';
+        document.querySelectorAll('input[name="codes"]:checked').forEach((input) => {
+            const chip = document.createElement('span');
+            chip.className = 'chip';
+            chip.textContent = input.parentElement.querySelector('strong').textContent;
+            box.appendChild(chip);
+        });
+        if (!box.children.length) {
+            const empty = document.createElement('span');
+            empty.className = 'hint';
+            empty.textContent = '尚未选择功能权限';
+            box.appendChild(empty);
+        }
+    }
+    refreshSelection();
+</script>
+</body>
+</html>

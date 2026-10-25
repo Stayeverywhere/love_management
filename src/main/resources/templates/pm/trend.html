@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('项目趋势')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <h1>项目趋势</h1>
+        <p class="sub" th:text="${'展示' + unitLabel + '新建的任务数量'}">展示近 7 日每天新建的任务数量，包含今天。</p>
+        <div class="filter-bar">
+            <a class="filter" th:classappend="${granularity == 'day'} ? 'active'" th:href="@{/pm/trends}">按日</a>
+            <a class="filter" th:classappend="${granularity == 'week'} ? 'active'" th:href="@{/pm/trends(granularity=week)}">按周</a>
+            <a class="filter" th:classappend="${granularity == 'month'} ? 'active'" th:href="@{/pm/trends(granularity=month)}">按月</a>
+        </div>
+        <div class="chart-box">
+            <canvas id="trendChart"></canvas>
+        </div>
+        <table id="trend-table">
+            <thead><tr><th th:text="${dimensionLabel}">日期</th><th>新建任务</th></tr></thead>
+            <tbody>
+            <tr th:each="point : ${points}">
+                <td th:text="${point.label}">日期</td>
+                <td th:text="${point.value}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    const labels = /*[[${trend.labels}]]*/ [];
+    const values = /*[[${trend.values}]]*/ [];
+    const canvas = document.getElementById('trendChart');
+    if (window.Chart) {
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '新建任务',
+                    data: values,
+                    borderColor: '#c2455f',
+                    backgroundColor: 'rgba(194, 69, 95, 0.12)',
+                    fill: true,
+                    tension: 0.25
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+</script>
+</body>
+</html>

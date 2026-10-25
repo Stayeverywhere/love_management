@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('任务讨论记录')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card" th:if="${task != null}">
+        <div class="page-head">
+            <div>
+                <h1>任务讨论记录</h1>
+                <p class="sub"><a th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.title}">任务</a> · 按时间倒序，最新在前</p>
+            </div>
+            <a class="btn secondary" th:href="@{/tasks/{id}(id=${task.id})}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回任务详情
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="comment-list">
+            <div class="comment" th:each="node : ${timeline}">
+                <div class="comment-head">
+                    <strong th:text="${node.authorName}">作者</strong>
+                    <span class="hint" th:text="${node.time}">时间</span>
+                    <span class="badge" th:if="${node.comment.parent != null}">回复</span>
+                </div>
+                <p th:text="${node.comment.content}">内容</p>
+            </div>
+            <p class="hint" th:if="${#lists.isEmpty(timeline)}">还没有讨论记录。</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

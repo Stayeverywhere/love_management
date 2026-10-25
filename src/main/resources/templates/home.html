@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('首页')}"></head>
+<body>
+<aside th:replace="~{fragments/layout :: nav}"></aside>
+<main class="wrap">
+    <section class="card">
+        <h1 th:text="'你好，' + ${currentUser.displayName}">你好</h1>
+        <p class="sub" th:text="'当前身份：' + ${currentUser.accountRole.label}">身份</p>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="home-links">
+            <a th:href="@{/tasks}">
+                <strong>我的任务</strong>
+                <span class="hint">查看分配给自己的任务详情。</span>
+            </a>
+            <a th:href="@{/password}">
+                <strong>设置密码</strong>
+                <span class="hint">按密码规则更新并保存密码。</span>
+            </a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

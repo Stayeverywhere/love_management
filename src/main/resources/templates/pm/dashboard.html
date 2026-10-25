@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('数据看板')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <h1>数据看板</h1>
+        <p class="sub">本轮展示成员规模、任务分配和任务状态。数字直接来自当前已保存的数据。</p>
+        <div class="grid">
+            <div class="metric"><span>成员总数</span><strong id="metric-members" th:text="${board.totalMembers}">0</strong></div>
+            <div class="metric good"><span>在职成员</span><strong id="metric-active" th:text="${board.activeMembers}">0</strong></div>
+            <div class="metric"><span>任务总数</span><strong id="metric-tasks" th:text="${board.totalTasks}">0</strong></div>
+            <div class="metric"><span>已分配</span><strong id="metric-assigned" th:text="${board.assignedTasks}">0</strong></div>
+            <div class="metric warn"><span>未分配</span><strong id="metric-unassigned" th:text="${board.unassignedTasks}">0</strong></div>
+            <div class="metric warn"><span>待处理</span><strong id="metric-todo" th:text="${board.todoCount}">0</strong></div>
+            <div class="metric"><span>进行中</span><strong id="metric-doing" th:text="${board.doingCount}">0</strong></div>
+            <div class="metric good"><span>已完成</span><strong id="metric-done" th:text="${board.doneCount}">0</strong></div>
+            <div class="metric warn"><span>待提醒任务</span><strong id="metric-remind" th:text="${board.remindingTasks}">0</strong></div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

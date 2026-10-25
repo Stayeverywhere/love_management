@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('我的资料')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>我的资料</h1>
+                <p class="sub">修改登录账号和展示名；修改账号后本次会话立即生效。</p>
+            </div>
+            <a class="btn secondary" th:href="@{/home}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/profile}" method="post" class="form-narrow">
+            <label for="username">登录账号</label>
+            <input id="username" name="username" th:value="${account.username}" required maxlength="32">
+            <label for="displayName">展示名</label>
+            <input id="displayName" name="displayName" th:value="${account.displayName}" maxlength="32" placeholder="留空则与账号相同">
+            <p class="hint">当前角色：<strong th:text="${account.accountRole.name()}">角色</strong>（角色由管理员在角色配置中维护，此处不可修改）</p>
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    保存资料
+                </button>
+            </div>
+        </form>
+        <hr class="section-divider">
+        <form th:action="@{/profile/security}" method="post" class="form-narrow">
+            <h2>密保设置</h2>
+            <p class="hint">设置密保问题与答案（各 2-100 字）；两项同时留空可清空已设置的密保。</p>
+            <label for="securityQuestion">密保问题</label>
+            <input id="securityQuestion" name="securityQuestion" th:value="${account.securityQuestion}" maxlength="100" placeholder="例如：你的小学名称？">
+            <label for="securityAnswer">密保答案</label>
+            <input id="securityAnswer" name="securityAnswer" type="password" maxlength="100" placeholder="留空将清空密保">
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    保存密保
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

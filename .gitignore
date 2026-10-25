@@ -1,0 +1,21 @@
+# 构建产物
+target/
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.swp
+
+# 日志与临时文件
+*.log
+*.dump
+*.dumpstream
+hs_err_pid*
+
+# 操作系统
+.DS_Store
+Thumbs.db

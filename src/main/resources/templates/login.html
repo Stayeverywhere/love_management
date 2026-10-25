@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('登录')}"></head>
+<body>
+<main class="login-shell">
+    <section class="card login-card">
+        <h1>登录爱管理</h1>
+        <p class="sub">使用账号和密码进入。</p>
+        <div class="banner bad" th:if="${param.error}">账号或密码不正确</div>
+        <div class="banner ok" th:if="${param.logout}">您已退出登录，请重新登录</div>
+        <form th:action="@{/login}" method="post">
+            <label for="username">账号</label>
+            <input id="username" name="username" autocomplete="username" required>
+            <label for="password">密码</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <div class="actions">
+                <button class="btn" type="submit">登录</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

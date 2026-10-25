@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('任务详情')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card" th:if="${task != null}">
+        <div class="page-head">
+            <div>
+                <h1 th:text="${task.title}">标题</h1>
+                <p class="sub" th:if="${task.description != null and !#strings.isEmpty(task.description)}" th:text="${task.description}">描述</p>
+            </div>
+            <div class="role-actions">
+                <a class="btn secondary" th:if="${canManage}" th:href="@{/pm/tasks/{id}/edit(id=${task.id})}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                    编辑
+                </a>
+                <form th:if="${canManage}" th:action="@{/pm/tasks/{id}/delete(id=${task.id})}" method="post"
+                      th:onsubmit="return confirm('确认删除任务「' + ${task.title} + '」吗？');">
+                    <button class="btn ghost danger" type="submit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        删除任务
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="detail-grid">
+            <div class="metric"><span>状态</span>
+                <form class="status-form" th:action="@{/tasks/{id}/status(id=${task.id})}" method="post" th:if="${canManage}">
+                    <select name="status">
+                        <option value="TODO" th:selected="${task.status.name() == 'TODO'}">待处理</option>
+                        <option value="IN_PROGRESS" th:selected="${task.status.name() == 'IN_PROGRESS'}">进行中</option>
+                        <option value="DONE" th:selected="${task.status.name() == 'DONE'}">已完成</option>
+                    </select>
+                    <button class="btn" type="submit">保存状态</button>
+                </form>
+                <span class="badge status" th:classappend="${task.status.name()}" th:unless="${canManage}" th:text="${task.status.label}">状态</span>
+                <span class="hint" th:if="${!canManage}">仅任务相关人员可修改状态</span>
+            </div>
+            <div class="metric"><span>优先级</span><strong><span class="badge" th:classappend="' ' + ${task.priorityClass}" th:text="${task.priorityLabel}">中</span></strong></div>
+            <div class="metric"><span>截止日期</span><strong th:classappend="${task.overdue} ? 'overdue'" th:text="${task.dueDateText != null and !#strings.isEmpty(task.dueDateText)} ? ${task.dueDateText} : '未设置'">-</strong></div>
+            <div class="metric"><span>提醒时间</span><strong th:text="${task.remindAtText != null and !#strings.isEmpty(task.remindAtText)} ? ${task.remindAtText} : '未设置'">-</strong></div>
+            <div class="metric"><span>负责人</span><strong th:text="${task.assignee != null} ? ${task.assignee.name} : '未分配'">-</strong></div>
+            <div class="metric"><span>创建人</span><strong th:text="${task.creator != null} ? ${task.creator.displayName} : '-'">-</strong></div>
+            <div class="metric"><span>创建时间</span><strong th:text="${task.createdAt != null} ? ${#temporals.format(task.createdAt, 'yyyy-MM-dd HH:mm')} : '-'">-</strong></div>
+        </div>
+
+        <div class="comment-section">
+            <div class="page-head" style="display:flex;align-items:center;justify-content:space-between;">
+                <h2>讨论</h2>
+                <a class="btn ghost" th:href="@{/tasks/{id}/discussions(id=${task.id})}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    查看讨论记录
+                </a>
+            </div>
+            <div class="comment-list">
+                <div class="comment" th:each="node : ${comments}">
+                    <div class="comment-head">
+                        <strong th:text="${node.authorName}">作者</strong>
+                        <span class="hint" th:text="${node.time}">时间</span>
+                    </div>
+                    <p th:text="${node.comment.content}">内容</p>
+                    <form class="reply-form" th:action="@{/tasks/{id}/comments(id=${task.id})}" method="post">
+                        <input type="hidden" name="parentId" th:value="${node.comment.id}">
+                        <input type="text" name="content" maxlength="500" placeholder="回复这条评论…" required>
+                        <button class="btn ghost" type="submit">发送回复</button>
+                    </form>
+                    <div class="comment replies" th:each="reply : ${node.replies}">
+                        <div class="comment-head">
+                            <strong th:text="${reply.authorName}">作者</strong>
+                            <span class="hint" th:text="${reply.time}">时间</span>
+                        </div>
+                        <p th:text="${reply.comment.content}">内容</p>
+                    </div>
+                </div>
+                <p class="hint" th:if="${#lists.isEmpty(comments)}">还没有评论，写下第一条吧。</p>
+            </div>
+            <form class="comment-form" th:action="@{/tasks/{id}/comments(id=${task.id})}" method="post">
+                <label for="content">发表评论</label>
+                <textarea id="content" name="content" rows="3" maxlength="500" placeholder="写下你的想法（1-500 字）" required></textarea>
+                <div class="actions">
+                    <button class="btn" type="submit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        发送评论
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

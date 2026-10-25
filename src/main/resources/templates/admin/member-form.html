@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('填写成员')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1 th:text="${member.id == null ? '新增成员' : '编辑成员'}">填写成员</h1>
+                <p class="sub">姓名必填，其余信息选填；保存后成员列表立即更新。</p>
+            </div>
+            <a class="btn secondary" th:href="@{/admin/members}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回列表
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/admin/members}" method="post" class="form-narrow">
+            <input type="hidden" name="id" th:if="${member.id != null}" th:value="${member.id}">
+            <label for="name">姓名 *</label>
+            <input id="name" name="name" th:value="${member.name}" required maxlength="20">
+            <label for="email">邮箱</label>
+            <input id="email" name="email" type="email" th:value="${member.email}" maxlength="80">
+            <label for="phone">电话</label>
+            <input id="phone" name="phone" th:value="${member.phone}" maxlength="20">
+            <label for="position">岗位</label>
+            <input id="position" name="position" th:value="${member.position}" maxlength="20">
+            <label for="status">状态</label>
+            <select id="status" name="status">
+                <option value="ACTIVE" th:selected="${member.status.name() == 'ACTIVE'}">在职</option>
+                <option value="INACTIVE" th:selected="${member.status.name() == 'INACTIVE'}">离职</option>
+            </select>
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    保存成员
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

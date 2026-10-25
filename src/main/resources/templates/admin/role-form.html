@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('填写角色')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1 th:text="${role.id == null ? '填写角色名称' : '修改角色'}">填写角色名称</h1>
+                <p class="sub" th:text="${rule}">规则</p>
+            </div>
+            <a class="btn secondary" th:href="@{/admin/roles}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/admin/roles}" method="post" class="form-narrow">
+            <input type="hidden" name="id" th:if="${role.id != null}" th:value="${role.id}">
+            <label for="name">角色名称</label>
+            <input id="name" name="name" th:value="${role.name}" required maxlength="20">
+            <label for="dataScope">数据权限</label>
+            <select id="dataScope" name="dataScope">
+                <option value="SELF" th:selected="${dataScope == 'SELF'}">仅自己：只能操作与自己相关的数据</option>
+                <option value="TEAM" th:selected="${dataScope == 'TEAM'}">本团队：可查看和维护本团队数据</option>
+                <option value="ALL" th:selected="${dataScope == null or dataScope == 'ALL'}">全部数据：可查看和维护全部数据</option>
+            </select>
+            <label for="description">说明</label>
+            <input id="description" name="description" th:value="${role.description}" maxlength="100">
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    保存角色配置
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('角色配置')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>角色配置</h1>
+                <p class="sub">保存后的角色名称和权限可以再次读取。</p>
+            </div>
+            <a class="btn" th:href="@{/admin/roles/new}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                填写角色
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="role-list">
+            <div class="empty" th:if="${#lists.isEmpty(roles)}">还没有角色，点击右上角「填写角色」创建第一个。</div>
+            <div class="role-item" th:each="role : ${roles}">
+                <div class="role-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6l8-3z"/></svg>
+                </div>
+                <div class="role-main">
+                    <div class="role-name-row">
+                        <strong th:text="${role.name}">名称</strong>
+                        <span class="chip" th:each="perm : ${role.permissions}" th:text="${perm.label}">权限</span>
+                        <span class="hint" th:if="${#lists.isEmpty(role.permissions)}">暂未分配权限</span>
+                    </div>
+                    <p class="role-desc" th:text="${role.description != null and !#strings.isEmpty(role.description) ? role.description : '暂无说明'}">说明</p>
+                </div>
+                <div class="role-actions">
+                    <a class="btn ghost" th:href="@{/admin/roles/{id}/permissions(id=${role.id})}" title="选择功能权限">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        权限
+                    </a>
+                    <a class="btn ghost" th:href="@{/admin/roles/{id}/edit(id=${role.id})}" title="修改角色">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        修改
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
