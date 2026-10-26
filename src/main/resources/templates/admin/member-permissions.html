@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('个人权限设置')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>个人权限设置</h1>
+                <p class="sub">为 <strong th:text="${member.name}">成员</strong> 单独设置功能权限。不勾选任何权限 = 清除个人权限（回到跟随角色）。</p>
+            </div>
+            <a class="btn ghost" th:href="@{/admin/members}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/admin/members/{id}/permissions(id=${member.id})}" method="post">
+            <div class="perm-grid">
+                <label class="perm-item" th:each="perm : ${allPermissions}">
+                    <input type="checkbox" name="permissionIds"
+                           th:value="${perm.id}"
+                           th:checked="${selected.contains(perm.id)}">
+                    <span th:text="${perm.label}">权限</span>
+                    <span class="hint" th:text="${perm.description}"></span>
+                </label>
+            </div>
+            <div class="actions" style="margin-top:16px;">
+                <button class="btn" type="submit">保存个人权限</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

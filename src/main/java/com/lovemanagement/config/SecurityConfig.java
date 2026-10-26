@@ -1,5 +1,7 @@
 package com.lovemanagement.config;
 
+import com.lovemanagement.domain.AppRole;
+import com.lovemanagement.repo.AppRoleRepository;
 import com.lovemanagement.repo.UserAccountRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +22,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserAccountRepository repository) {
+    public UserDetailsService userDetailsService(UserAccountRepository repository,
+                                                  AppRoleRepository roleRepository) {
         return username -> repository.findByUsername(username)
-                .map(account -> User.withUsername(account.getUsername())
-                        .password(account.getPasswordHash())
-                        .roles(account.getAccountRole().name())
-                        .build())
+                .map(account -> {
+                    String code = account.getAccountRole().name();
+                    // 该账号所属角色被禁用时拒绝登录
+                    AppRole role = roleRepository.findByCode(code).orElse(null);
+                    if (role != null && !role.isEnabled()) {
+                        throw new UsernameNotFoundException("该账号所属角色已被禁用");
+                    }
+                    return User.withUsername(account.getUsername())
+                            .password(account.getPasswordHash())
+                            .roles(code)
+                            .build();
+                })
                 .orElseThrow(() -> new UsernameNotFoundException("账号不存在"));
     }
 

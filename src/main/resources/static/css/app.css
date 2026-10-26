@@ -383,6 +383,29 @@ tbody tr:hover { background: #fbf4f1; }
   outline: none;
   border-color: var(--accent);
 }
+.perm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.perm-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+}
+.perm-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+.perm-item .hint {
+  width: 100%;
+  font-size: 12px;
+}
 .page-actions {
   display: inline-flex;
   align-items: center;

@@ -61,6 +61,10 @@ public class ProjectTask {
 
     private LocalDateTime assignedAt;
 
+    /** 完成时间（状态变更为 DONE 时记录），可空。 */
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
     /** 提醒时间，可空。 */
     @Column(name = "remind_at")
     private LocalDateTime remindAt;

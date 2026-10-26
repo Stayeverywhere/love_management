@@ -1,9 +1,12 @@
 package com.lovemanagement.service;
 
+import org.springframework.stereotype.Component;
+
 import com.lovemanagement.domain.PolicyException;
 
 import java.util.regex.Pattern;
 
+@Component
 public final class RoleNamePolicy {
 
     public static final String RULE = "角色名称必填，长度为 2 到 20 个字符，仅允许中文、字母、数字和下划线。";

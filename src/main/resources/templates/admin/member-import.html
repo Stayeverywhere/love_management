@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('批量导入成员')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>批量导入成员</h1>
+                <p class="sub">每行一个成员，姓名必填、邮箱可选；重复姓名自动跳过。</p>
+            </div>
+            <a class="btn ghost" th:href="@{/admin/members}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                返回
+            </a>
+        </div>
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <form th:action="@{/admin/members/import}" method="post" class="form-narrow">
+            <label for="names">成员清单</label>
+            <textarea id="names" name="names" rows="12"
+                      placeholder="张三&#10;李四&#10;王五"></textarea>
+            <p class="hint">姓名之间用换行分隔；如需指定邮箱，请在下一行填写，与姓名按顺序一一对应（可留空整段）。</p>
+            <label for="emails">邮箱清单（可选，按顺序对应上方姓名）</label>
+            <textarea id="emails" name="emails" rows="6"
+                      placeholder="zhangsan@example.com&#10;lisi@example.com&#10;"></textarea>
+            <div class="actions">
+                <button class="btn" type="submit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    导入
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

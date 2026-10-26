@@ -12,4 +12,6 @@ public interface AppRoleRepository extends JpaRepository<AppRole, Long> {
     boolean existsByName(String name);
 
     boolean existsByNameAndIdNot(String name, Long id);
+
+    java.util.Optional<com.lovemanagement.domain.AppRole> findByCode(String code);
 }

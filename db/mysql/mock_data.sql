@@ -59,6 +59,7 @@ CREATE TABLE project_task (
     creator_id  BIGINT       NULL,
     created_at  DATETIME     NULL,
     assigned_at DATETIME     NULL,
+    completed_at DATETIME    NULL,
     remind_at   DATETIME     NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_project_task_assignee FOREIGN KEY (assignee_id) REFERENCES team_member (id),

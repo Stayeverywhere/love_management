@@ -93,4 +93,30 @@ public class RoleController {
         }
         return "redirect:/admin/roles/" + id + "/permissions";
     }
+
+    @PostMapping("/{id}/copy")
+    public String copy(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            AppRole copied = roleService.copy(id);
+            redirectAttributes.addFlashAttribute("success", "已复制角色「" + copied.getName() + "」");
+            return "redirect:/admin/roles";
+        } catch (PolicyException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/admin/roles";
+        }
+    }
+
+    @PostMapping("/{id}/enabled")
+    public String setEnabled(@PathVariable Long id,
+                             @RequestParam boolean enabled,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            roleService.setEnabled(id, enabled);
+            redirectAttributes.addFlashAttribute("success", enabled ? "角色已启用" : "角色已禁用");
+            return "redirect:/admin/roles";
+        } catch (PolicyException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/admin/roles";
+        }
+    }
 }

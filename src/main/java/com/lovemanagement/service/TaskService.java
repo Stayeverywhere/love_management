@@ -188,6 +188,7 @@ public class TaskService {
     @Transactional
     public ProjectTask changeStatus(ProjectTask task, TaskStatus status) {
         task.setStatus(status);
+        task.setCompletedAt(status == TaskStatus.DONE ? LocalDateTime.now() : null);
         return taskRepository.save(task);
     }
 

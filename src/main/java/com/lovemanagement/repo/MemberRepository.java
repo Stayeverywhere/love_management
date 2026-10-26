@@ -16,6 +16,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Page<Member> findByNameContainingOrderByIdAsc(String name, Pageable pageable);
 
+    java.util.Optional<Member> findByName(String name);
+
     List<Member> findByStatusOrderByNameAsc(MemberStatus status);
 
     long countByStatus(MemberStatus status);

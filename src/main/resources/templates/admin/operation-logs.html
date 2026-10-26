@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('操作日志')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+<main class="wrap">
+    <section class="card">
+        <div class="page-head">
+            <div>
+                <h1>操作日志</h1>
+                <p class="sub">记录角色/权限/成员变更操作，可追溯操作人与时间。</p>
+            </div>
+        </div>
+        <table>
+            <thead>
+            <tr><th>时间</th><th>操作人</th><th>操作</th><th>对象</th><th>详情</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logs}">
+                <td th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm')}">-</td>
+                <td th:text="${log.operatorName}">-</td>
+                <td th:text="${log.action}">-</td>
+                <td>
+                    <span th:text="${log.targetType}">-</span>
+                    <span th:if="${log.targetId != null}" th:text="'#' + ${log.targetId}"></span>
+                </td>
+                <td th:text="${log.detail}">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(logs)}"><td colspan="5" class="hint">暂无操作记录。</td></tr>
+            </tbody>
+        </table>
+        <div th:replace="~{fragments/layout :: pagination}"></div>
+    </section>
+</main>
+</body>
+</html>

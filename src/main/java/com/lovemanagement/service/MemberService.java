@@ -23,13 +23,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ProjectTaskRepository taskRepository;
     private final UserAccountRepository userAccountRepository;
+    private final OperationLogService operationLogService;
 
     public MemberService(MemberRepository memberRepository,
                          ProjectTaskRepository taskRepository,
-                         UserAccountRepository userAccountRepository) {
+                         UserAccountRepository userAccountRepository,
+                         OperationLogService operationLogService) {
         this.memberRepository = memberRepository;
         this.taskRepository = taskRepository;
         this.userAccountRepository = userAccountRepository;
+        this.operationLogService = operationLogService;
     }
 
     public List<Member> list() {
@@ -70,7 +73,10 @@ public class MemberService {
         member.setPhone(normalizedPhone);
         member.setPosition(normalizedPosition);
         member.setStatus(status);
-        return memberRepository.save(member);
+        Member saved = memberRepository.save(member);
+        operationLogService.log(id == null ? "成员新增" : "成员修改", "MEMBER", saved.getId(),
+                (id == null ? "新增" : "修改") + "成员「" + saved.getName() + "」");
+        return saved;
     }
 
     @Transactional
@@ -83,6 +89,8 @@ public class MemberService {
             throw new PolicyException("该成员已绑定登录账号，不能移除");
         }
         memberRepository.delete(member);
+        operationLogService.log("成员移除", "MEMBER", id,
+                "移除成员「" + member.getName() + "」");
     }
 
     private String checkName(String name) {

@@ -71,6 +71,40 @@ public class DashboardService {
         return last7Days();
     }
 
+    /**
+     * 燃尽图（近 8 周，周一为一周起点，含本周）：
+     * ideal = 期初应完成基准线（总任务数线性递减至 0），
+     * remaining = 各周末实际剩余未完成数。
+     * 旧数据无完成时间时，DONE 任务按创建时间计入完成。
+     */
+    public BurndownSeries burndown() {
+        LocalDate today = LocalDate.now();
+        LocalDate start = today.minusWeeks(7).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        List<com.lovemanagement.domain.ProjectTask> tasks =
+                taskRepository.findByCreatedAtGreaterThanEqual(start.atStartOfDay());
+        int total = tasks.size();
+        List<String> labels = new ArrayList<>();
+        List<Long> ideal = new ArrayList<>();
+        List<Long> remaining = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            LocalDate weekStart = start.plusWeeks(i);
+            LocalDateTime weekEnd = weekStart.plusDays(6).atTime(23, 59);
+            long done = tasks.stream().filter(t -> {
+                java.time.LocalDateTime doneAt = t.getCompletedAt() != null
+                        ? t.getCompletedAt()
+                        : t.getCreatedAt();
+                return t.getStatus() == TaskStatus.DONE && !doneAt.isAfter(weekEnd);
+            }).count();
+            labels.add(weekStart.format(LABEL) + "周");
+            ideal.add(Math.round((double) total * (7 - i) / 7.0));
+            remaining.add((long) (total - done));
+        }
+        return new BurndownSeries(labels, ideal, remaining);
+    }
+
+    public record BurndownSeries(List<String> labels, List<Long> ideal, List<Long> remaining) {
+    }
+
     public TrendSeries last8Weeks() {
         LocalDate today = LocalDate.now();
         LocalDate start = today.minusWeeks(7).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));

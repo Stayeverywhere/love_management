@@ -27,6 +27,7 @@ public class HomeController {
         UserAccount user = currentUserService.currentOrNull();
         if (user != null && user.getAccountRole() != AccountRole.MEMBER) {
             model.addAttribute("board", dashboardService.snapshot());
+            model.addAttribute("burndown", dashboardService.burndown());
             return "pm/dashboard";
         }
         return "home";

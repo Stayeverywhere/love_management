@@ -13,10 +13,10 @@ INSERT INTO function_permission (id, code, label, description) VALUES
     (8, 'DASHBOARD_VIEW', '数据看板', '查看项目数据看板'),
     (9, 'TREND_VIEW', '项目趋势', '查看项目趋势图');
 
-INSERT INTO app_role (id, name, description, data_scope) VALUES
-    (1, '系统管理员', '维护角色、权限和成员', 'ALL'),
-    (2, '项目经理', '创建任务、分配负责人并查看看板', 'TEAM'),
-    (3, '团队成员', '查看分配给自己的任务', 'SELF');
+INSERT INTO app_role (id, name, description, data_scope, code, enabled) VALUES
+    (1, '系统管理员', '维护角色、权限和成员', 'ALL', 'ADMIN', 1),
+    (2, '项目经理', '创建任务、分配负责人并查看看板', 'TEAM', 'PROJECT_MANAGER', 1),
+    (3, '团队成员', '查看分配给自己的任务', 'SELF', 'MEMBER', 1);
 
 INSERT INTO app_role_permission (role_id, permission_id) VALUES
     (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9),

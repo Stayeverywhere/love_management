@@ -25,6 +25,8 @@ USE love_management;
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS task_comment;
 DROP TABLE IF EXISTS project_task;
+DROP TABLE IF EXISTS member_function_permission;
+DROP TABLE IF EXISTS operation_log;
 DROP TABLE IF EXISTS app_role_permission;
 DROP TABLE IF EXISTS account_user;
 DROP TABLE IF EXISTS function_permission;
@@ -75,8 +77,10 @@ CREATE TABLE IF NOT EXISTS app_role (
     name        VARCHAR(20)  NOT NULL,
     description VARCHAR(100) NULL,
     data_scope  VARCHAR(10)  NOT NULL DEFAULT 'ALL',
+    code        VARCHAR(32)  NULL,
+    enabled     TINYINT(1)   NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
-    CONSTRAINT uk_app_role_name UNIQUE (name)
+    UNIQUE KEY uk_app_role_name (name)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 -- 角色-权限关联（多对多）
@@ -100,6 +104,7 @@ CREATE TABLE IF NOT EXISTS project_task (
     creator_id  BIGINT       NULL,
     created_at  DATETIME     NULL,
     assigned_at DATETIME     NULL,
+    completed_at DATETIME    NULL,
     remind_at   DATETIME     NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_project_task_assignee FOREIGN KEY (assignee_id) REFERENCES team_member (id),
@@ -121,6 +126,33 @@ CREATE TABLE IF NOT EXISTS task_comment (
     CONSTRAINT fk_task_comment_parent FOREIGN KEY (parent_id) REFERENCES task_comment (id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+-- 成员个人功能权限（配置后成员仅拥有此处列出的权限，不再跟随角色）
+CREATE TABLE IF NOT EXISTS member_function_permission (
+    id            BIGINT NOT NULL AUTO_INCREMENT,
+    member_id     BIGINT NOT NULL,
+    permission_id BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_mfp_member_perm (member_id, permission_id),
+    KEY idx_mfp_member (member_id),
+    CONSTRAINT fk_mfp_member FOREIGN KEY (member_id) REFERENCES team_member (id) ON DELETE CASCADE,
+    CONSTRAINT fk_mfp_permission FOREIGN KEY (permission_id) REFERENCES function_permission (id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+-- 操作日志（记录权限、角色、成员变更，可追溯操作人）
+CREATE TABLE IF NOT EXISTS operation_log (
+    id            BIGINT        NOT NULL AUTO_INCREMENT,
+    operator_id   BIGINT        NULL,
+    operator_name VARCHAR(64)   NULL,
+    action        VARCHAR(64)   NOT NULL,
+    target_type   VARCHAR(32)   NOT NULL,
+    target_id     BIGINT        NULL,
+    detail        VARCHAR(500)  NULL,
+    created_at    DATETIME      NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_operation_log_target (target_type, target_id),
+    KEY idx_operation_log_operator (operator_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
 -- ------------------ 基线数据（无演示成员、无演示任务） ------------------
 
 -- 功能权限目录
@@ -136,10 +168,10 @@ INSERT INTO function_permission (id, code, label, description) VALUES
     (9, 'TREND_VIEW', '项目趋势', '查看项目趋势图');
 
 -- 内置角色
-INSERT INTO app_role (id, name, description, data_scope) VALUES
-    (1, '系统管理员', '维护角色、权限和成员', 'ALL'),
-    (2, '项目经理', '创建任务、分配负责人并查看看板', 'TEAM'),
-    (3, '团队成员', '查看分配给自己的任务', 'SELF');
+INSERT INTO app_role (id, name, description, data_scope, code, enabled) VALUES
+    (1, '系统管理员', '维护角色、权限和成员', 'ALL', 'ADMIN', 1),
+    (2, '项目经理', '创建任务、分配负责人并查看看板', 'TEAM', 'PROJECT_MANAGER', 1),
+    (3, '团队成员', '查看分配给自己的任务', 'SELF', 'MEMBER', 1);
 
 -- 角色-权限关联
 INSERT INTO app_role_permission (role_id, permission_id) VALUES

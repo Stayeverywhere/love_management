@@ -35,6 +35,13 @@ public class AppRole {
     @Column(nullable = false, length = 10)
     private String dataScope;
 
+    /** 机器可读编码，对应 AccountRole 枚举值（如 ADMIN / PROJECT_MANAGER / MEMBER）。 */
+    @Column(length = 32)
+    private String code;
+
+    @Column(nullable = false)
+    private boolean enabled = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "app_role_permission",

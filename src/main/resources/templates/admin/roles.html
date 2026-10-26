@@ -35,10 +35,16 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         权限
                     </a>
-                    <a class="btn ghost" th:href="@{/admin/roles/{id}/edit(id=${role.id})}" title="修改角色">
+                    <a class="btn ghost" th:href="@{/admin/roles/{id}/edit(id=${role.id})}" title="修改角色" style="margin-right:4px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                         修改
                     </a>
+                    <form th:action="@{/admin/roles/{id}/copy(id=${role.id})}" method="post">
+                        <button class="btn ghost" type="submit" title="复制角色">复制</button>
+                    </form>
+                    <form th:action="@{/admin/roles/{id}/enabled(id=${role.id},enabled=${!role.enabled})}" method="post">
+                        <button class="btn ghost" type="submit" th:text="${role.enabled} ? '禁用' : '启用'">禁用</button>
+                    </form>
                 </div>
             </div>
         </div>

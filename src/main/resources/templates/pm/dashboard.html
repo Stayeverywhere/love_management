@@ -19,6 +19,48 @@
             <div class="metric warn"><span>待提醒任务</span><strong id="metric-remind" th:text="${board.remindingTasks}">0</strong></div>
         </div>
     </section>
+    <section class="card">
+        <h1>燃尽图</h1>
+        <p class="sub">近 8 周（周一为一周起点）：虚线为应完成基准线，实线为实际剩余未完成任务数；实线越贴近虚线说明进度越健康。</p>
+        <div class="chart-box">
+            <canvas id="burndownChart"></canvas>
+        </div>
+    </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    const labels = /*[[${burndown.labels}]]*/ [];
+    const ideal = /*[[${burndown.ideal}]]*/ [];
+    const remaining = /*[[${burndown.remaining}]]*/ [];
+    const canvas = document.getElementById('burndownChart');
+    if (window.Chart && labels.length > 0) {
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '实际剩余',
+                    data: remaining,
+                    borderColor: '#c2455f',
+                    backgroundColor: 'rgba(194, 69, 95, 0.12)',
+                    fill: true,
+                    tension: 0.25
+                }, {
+                    label: '应完成基准',
+                    data: ideal,
+                    borderColor: '#8a8a8a',
+                    borderDash: [6, 4],
+                    fill: false,
+                    tension: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+</script>
 </body>
 </html>

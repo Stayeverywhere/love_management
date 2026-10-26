@@ -21,6 +21,7 @@ public class DashboardController {
     @GetMapping("/pm/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("board", dashboardService.snapshot());
+        model.addAttribute("burndown", dashboardService.burndown());
         return "pm/dashboard";
     }
 
