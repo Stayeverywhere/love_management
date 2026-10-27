@@ -9,6 +9,7 @@
             <div>
                 <h1>我的个人统计</h1>
                 <p class="sub" th:text="${'账号 ' + account.username + ' · 个人工作量总览'}">个人统计</p>
+                <p class="hint">统计口径：「分配给我」按任务负责人字段统计（含各状态）；「我创建」按任务创建人统计；「我评论」按评论发表人统计。仅展示当前账号有权查看的数据。</p>
             </div>
         </div>
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 16px;">

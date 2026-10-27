@@ -2,6 +2,10 @@ package com.lovemanagement.service;
 
 import com.lovemanagement.domain.PolicyException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /** 密保问题/答案校验规则。 */
 public final class SecurityPolicy {
 
@@ -27,7 +31,23 @@ public final class SecurityPolicy {
         if (value.length() < 2 || value.length() > 100) {
             throw new PolicyException("密保答案长度须为 2 到 100 个字符");
         }
-        return value;
+        return hash(value);
+    }
+
+    /** 密保答案以加盐 SHA-256 摘要存储，避免明文落库、不以明文展示。 */
+    private static String hash(String value) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(("love-secrecy::" + value).getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                sb.append(Character.forDigit((b >> 4) & 0xF, 16));
+                sb.append(Character.forDigit(b & 0xF, 16));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 unavailable", ex);
+        }
     }
 
     /** 问题与答案须同时设置或同时清空。 */

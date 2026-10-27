@@ -33,6 +33,8 @@
         <form th:action="@{/profile/security}" method="post" class="form-narrow">
             <h2>密保设置</h2>
             <p class="hint">设置密保问题与答案（各 2-100 字）；两项同时留空可清空已设置的密保。</p>
+            <p class="hint" th:if="${account.securityQuestion != null}"
+               th:text="'已设置密保问题：' + ${account.securityQuestion} + '（答案以加密形式保存，不显示）'">已设置密保</p>
             <label for="securityQuestion">密保问题</label>
             <input id="securityQuestion" name="securityQuestion" th:value="${account.securityQuestion}" maxlength="100" placeholder="例如：你的小学名称？">
             <label for="securityAnswer">密保答案</label>

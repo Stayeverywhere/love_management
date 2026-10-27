@@ -160,15 +160,20 @@ public class TaskService {
             return null;
         }
         String value = remindAt.trim().replace('T', ' ');
+        LocalDateTime parsed;
         try {
-            return LocalDateTime.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            parsed = LocalDateTime.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         } catch (DateTimeParseException ex) {
             try {
-                return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+                parsed = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
             } catch (DateTimeParseException ex2) {
                 throw new PolicyException("提醒时间格式不合法，应为 yyyy-MM-dd HH:mm");
             }
         }
+        if (parsed.isBefore(LocalDateTime.now())) {
+            throw new PolicyException("提醒时间不能早于当前时间");
+        }
+        return parsed;
     }
 
     @Transactional
